@@ -33,7 +33,7 @@ $config = [];
 //       for Mysql: key, cipher, cert, capath, ca, verify_server_cert,
 //       for Postgres: application_name, sslmode, sslcert, sslkey, sslrootcert, sslcrl, sslcompression, service.
 //       e.g. 'mysql://roundcube:@localhost/roundcubemail?verify_server_cert=false'
-$config['db_dsnw'] = 'mysql://roundcube:@localhost/roundcubemail';
+$config['db_dsnw'] = 'mysql://{{RC_DB_USERNAME}}:{{RC_DB_PASSWD}}@localhost/{{RC_DB_NAME}}';
 
 // Database DSN for read-only operations (if empty write database will be used)
 // useful for database replication
@@ -144,7 +144,7 @@ $config['redis_debug'] = false;
 // For example %n = mail.domain.tld, %t = domain.tld
 // WARNING: After hostname change update of mail_host column in users table is
 //          required to match old user data records with the new host.
-$config['default_host'] = 'localhost';
+$config['default_host'] = '{{APP_HOST}}.{{APP_DOMAIN}}';
 
 // TCP port used for IMAP connections
 $config['default_port'] = 143;
@@ -269,18 +269,20 @@ $config['messages_cache_threshold'] = 50;
 // For example %n = mail.domain.tld, %t = domain.tld
 // To specify different SMTP servers for different IMAP hosts provide an array
 // of IMAP host (no prefix or port) and SMTP server e.g. ['imap.example.com' => 'smtp.example.net']
-$config['smtp_server'] = 'localhost';
+$config['smtp_server'] = '{{APP_HOST}}.{{APP_DOMAIN}}';
 
 // SMTP port. Use 25 for cleartext, 465 for Implicit TLS, or 587 for STARTTLS (default)
-$config['smtp_port'] = 587;
+$config['smtp_port'] = {{SMTP_PORT}};
 
 // SMTP username (if required) if you use %u as the username Roundcube
 // will use the current username for login
-$config['smtp_user'] = '%u';
+// $config['smtp_user'] = '%u';
+$config['smtp_user'] = '';
 
 // SMTP password (if required) if you use %p as the password Roundcube
 // will use the current user's password for login
-$config['smtp_pass'] = '%p';
+// $config['smtp_pass'] = '%p';
+$config['smtp_pass'] = '';
 
 // SMTP AUTH type (DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN or empty to use
 // best server supported one)
