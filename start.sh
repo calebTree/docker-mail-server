@@ -4,6 +4,15 @@
 green() {
   echo -e '\e[32m'$1'\e[m';
 }
+cyan() {
+  echo -e '\e[36m'$1'\e[m';
+}
+lightgreen() {
+  echo -e '\e[1;32m'$1'\e[m';
+}
+red() {
+  echo -e '\e[1;31m'$1'\e[m';
+}
 readonly MYSQLD=`which mysqld`
 readonly MYSQL=`which mysql`
 readonly HTTPD=`which httpd`
@@ -49,10 +58,12 @@ $HTTPD
 # setup mariadb mysql
 echo "user=root" >> /etc/my.cnf
 mysql_install_db
+red "this gets stuck, just press [ENTER]"
 $MYSQLD &
 # mysql_secure_installation
 
 # setup roundcube database
+# credit: https://clubmate.fi/shell-script-to-create-mysql-database
 # (to do)
 # Construct the MySQL query
 readonly Q1="CREATE DATABASE IF NOT EXISTS $RC_DB_NAME CHARACTER SET utf8 COLLATE utf8_bin;"
@@ -62,8 +73,8 @@ readonly SQL="${Q1}${Q2}${Q3}"
 # Run the actual command
 $MYSQL -uroot "-p$MARIADB_ROOTPWD" -e "$SQL"
 # Let the user know the database was created
-green "Database $RC_DB_NAME and user $RC_DB_USERNAME created with a password you chose."
 # initalize roundcube
+cyan "doing more stuff ..."
 $MYSQL -h "localhost" -u $RC_DB_USERNAME "-p$RC_DB_PASSWD" "$RC_DB_NAME" < "/usr/share/roundcubemail/SQL/mysql.initial.sql"
 
 # dovecot
@@ -75,8 +86,6 @@ sed -i "s/ssl = required/ssl = no/g" /etc/dovecot/conf.d/10-ssl.conf
 # sed -i "s/ssl_cert = </etc/pki/dovecot/certs/dovecot.pem/#ssl_cert = </etc/pki/dovecot/certs/dovecot.pem/g" /etc/dovecot/conf.d/10-ssl.conf
 # sed -i "s/ssl_key = </etc/pki/dovecot/private/dovecot.pem/#ssl_key = </etc/pki/dovecot/private/dovecot.pem/g" /etc/dovecot/conf.d/10-ssl.conf
 # $DOVECOT
-echo "comment out lines: /etc/dovecot/conf.d/10-ssl.conf"
-echo "then start dovecot"
 
 # postfix
 sed -i "s/{{APP_HOST}}/$APP_HOST/g" /etc/postfix/main.cf
@@ -86,3 +95,14 @@ sed -i "s/{{APP_DOMAIN}}/$APP_DOMAIN/g" /etc/postfix/main.cf
 
 newaliases
 postfix start
+
+lightgreen "The script is done."
+lightgreen "Database $RC_DB_NAME and user $RC_DB_USERNAME created with a password you chose."
+cyan "comment out lines:"
+green "ssl_cert = </etc/pki/dovecot/certs/dovecot.pem\nssl_key = </etc/pki/dovecot/private/dovecot.pem"
+green "in: /etc/dovecot/conf.d/10-ssl.conf"
+cyan "then start dovecot by just typing 'dovecot'"
+cyan "create users with (replace <user1> with a username):"
+green "useradd --create-home -s /sbin/nologin <user1>; passwd <user1>"
+cyan "send email to:"
+green "<user1>@$APP_HOST.$APP_DOMAIN"

@@ -38,3 +38,5 @@ EXPOSE 80
 # EXPOSE 443
 
 ADD start.sh /start.sh
+
+CMD sh ./start.sh && bash
