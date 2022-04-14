@@ -2,6 +2,8 @@
 
 doveconf: Fatal: Error in configuration file /etc/dovecot/conf.d/10-ssl.conf line 14: ssl_cert: Can't open file /etc/pki/dovecot/certs/dovecot.pem: No such file or directory
 
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+
 !!!! future setup script syntax
 sed -i "s/chemlab.edu/chemlab.edu2/g" /etc/dovecot/local.conf
 

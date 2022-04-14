@@ -37,11 +37,11 @@ sed -i "s/{{RC_DB_USERNAME}}/$RC_DB_USERNAME/g" /etc/roundcubemail/config.inc.ph
 sed -i "s/{{RC_DB_PASSWD}}/$RC_DB_PASSWD/g" /etc/roundcubemail/config.inc.php
 sed -i "s/{{RC_DB_NAME}}/$RC_DB_NAME/g" /etc/roundcubemail/config.inc.php
 
-# start php service
+# start the php service
 mkdir /run/php-fpm
 $PHPFPM
 
-# start httpd service
+# start the httpd service
 $HTTPD
 # /etc/httpd/conf.d/roundcubemail.conf
 # <IfModule mod_authz_core.c>
@@ -58,7 +58,7 @@ $HTTPD
 # setup mariadb mysql
 echo "user=root" >> /etc/my.cnf
 mysql_install_db
-red "this gets stuck, just press [ENTER]"
+red "This gets stuck, just press [ENTER]."
 $MYSQLD &
 # mysql_secure_installation
 
@@ -74,7 +74,7 @@ readonly SQL="${Q1}${Q2}${Q3}"
 $MYSQL -uroot "-p$MARIADB_ROOTPWD" -e "$SQL"
 # Let the user know the database was created
 # initalize roundcube
-cyan "doing more stuff ..."
+cyan "Please wait, doing more stuff ..."
 $MYSQL -h "localhost" -u $RC_DB_USERNAME "-p$RC_DB_PASSWD" "$RC_DB_NAME" < "/usr/share/roundcubemail/SQL/mysql.initial.sql"
 
 # dovecot
@@ -96,13 +96,15 @@ sed -i "s/{{APP_DOMAIN}}/$APP_DOMAIN/g" /etc/postfix/main.cf
 newaliases
 postfix start
 
-lightgreen "The script is done."
-lightgreen "Database $RC_DB_NAME and user $RC_DB_USERNAME created with a password you chose."
-cyan "comment out lines:"
-green "ssl_cert = </etc/pki/dovecot/certs/dovecot.pem\nssl_key = </etc/pki/dovecot/private/dovecot.pem"
-green "in: /etc/dovecot/conf.d/10-ssl.conf"
-cyan "then start dovecot by just typing 'dovecot'"
-cyan "create users with (replace <user1> with a username):"
-green "useradd --create-home -s /sbin/nologin <user1>; passwd <user1>"
-cyan "send email to:"
-green "<user1>@$APP_HOST.$APP_DOMAIN"
+green "\nThe setup script completed!!"
+green "Mysql database [$RC_DB_NAME] and user [$RC_DB_USERNAME] created with password [$RC_DB_PASSWD]."
+green "\nComment out lines in: '/etc/dovecot/conf.d/10-ssl.conf'."
+cyan "ssl_cert = </etc/pki/dovecot/certs/dovecot.pem\nssl_key = </etc/pki/dovecot/private/dovecot.pem"
+green "\nThen start dovecot."
+cyan "$DOVECOT"
+green "\nCreate user(s):"
+cyan "useradd --create-home -s /sbin/nologin <user1>; passwd <user1>"
+green "Send email(s) to:"
+cyan "<user1>@$APP_HOST.$APP_DOMAIN"
+green "(replace <user1> above with your choice username)\n"
+green "Leave the container with: 'Ctrl + P + Ctrl Q'."
