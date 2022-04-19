@@ -4,14 +4,11 @@
 green() {
   echo -e '\e[32m'$1'\e[m';
 }
-cyan() {
-  echo -e '\e[36m'$1'\e[m';
-}
-lightgreen() {
-  echo -e '\e[1;32m'$1'\e[m';
-}
 red() {
   echo -e '\e[1;31m'$1'\e[m';
+}
+cyan() {
+  echo -e '\e[36m'$1'\e[m';
 }
 readonly MYSQLD=`which mysqld`
 readonly MYSQL=`which mysql`
@@ -19,8 +16,9 @@ readonly HTTPD=`which httpd`
 readonly PHPFPM=`which php-fpm`
 readonly DOVECOT=`which dovecot`
 
-echo "starting app"
-echo "full hostname: $APP_HOST.$APP_DOMAIN"
+green "Configuring mail server with hostname: $APP_HOST.$APP_DOMAIN."
+sleep 1
+#echo "full hostname: $APP_HOST.$APP_DOMAIN"
 
 #export HOST_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 #echo "$HOST_IP dockerhost" >> /etc/hosts
@@ -93,18 +91,9 @@ sed -i "s/{{APP_DOMAIN}}/$APP_DOMAIN/g" /etc/postfix/main.cf
 # number option to `s' command may not be zero
 # sed -i "s/{{MY_NETWORKS}}/$MY_NETWORKS/g" /etc/postfix/main.cf
 
+# support user receive at root
+#echo -e "support:\troot" >> /etc/aliases
 newaliases
 postfix start
 
-green "\nThe setup script completed!!"
-green "Mysql database [$RC_DB_NAME] and user [$RC_DB_USERNAME] created with password [$RC_DB_PASSWD]."
-green "\nComment out lines in: '/etc/dovecot/conf.d/10-ssl.conf'."
-cyan "ssl_cert = </etc/pki/dovecot/certs/dovecot.pem\nssl_key = </etc/pki/dovecot/private/dovecot.pem"
-green "\nThen start dovecot."
-cyan "$DOVECOT"
-green "\nCreate user(s):"
-cyan "useradd --create-home -s /sbin/nologin <user1>; passwd <user1>"
-green "Send email(s) to:"
-cyan "<user1>@$APP_HOST.$APP_DOMAIN"
-green "(replace <user1> above with your choice username)\n"
-green "Leave the container with: 'Ctrl + P + Ctrl Q'."
+./configinfo.sh
