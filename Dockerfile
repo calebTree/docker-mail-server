@@ -10,20 +10,29 @@ RUN dnf install -y vim procps iputils passwd mutt
 # ENV DB_USER root
 
 ENV APP_HOST mail
+
+# roundcube
 ENV RC_DB_USERNAME roundcube
 ENV RC_DB_PASSWD fedora
 ENV RC_DB_NAME roundcube
 ENV SMTP_PORT 25
-ENV MY_NETWORKS 0.0.0.0/0
-# roundcube
+# ENV MY_NETWORKS 0.0.0.0/0
 COPY roundcubemail.conf /etc/httpd/conf.d/roundcubemail.conf
 COPY config.inc.php /etc/roundcubemail/config.inc.php
+
+# MariaDB
+# ENV MARIADB_ROOTPWD password123
+
 # dovecot
 COPY dovecot.conf /etc/dovecot/dovecot.conf
 COPY 10-auth.conf /etc/dovecot/conf.d/10-auth.conf
 # postfix
 COPY main.cf /etc/postfix/main.cf
 
+# user
+ENV USER1_PSWD password123
+
+# ports
 # SMTP ports
 EXPOSE 25
 # EXPOSE 587
