@@ -47,6 +47,7 @@ EXPOSE 80
 # EXPOSE 443
 
 ADD configinfo.sh /configinfo.sh
+RUN chmod +x /configinfo.sh
 ADD start.sh /start.sh
 
 CMD sh ./start.sh && bash
